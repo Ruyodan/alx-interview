@@ -1,40 +1,37 @@
+#!/usr/bin/python3
+'''A script that reads stdin line by line and computes metrics'''
 
-dule containing script that reads stdin and computes metrics"""
+
 import sys
 
-status_codes = {"200": 0, "301": 0, "400": 0, "401": 0,
-                "403": 0, "404": 0, "405": 0, "500": 0}
+cache = {'200': 0, '301': 0, '400': 0, '401': 0,
+         '403': 0, '404': 0, '405': 0, '500': 0}
 total_size = 0
-total_num = 0
+counter = 0
 
 try:
     for line in sys.stdin:
-        lines = line.split(" ")
-
-        if len(lines) > 4:
-            code = lines[-2]
-            size = int(lines[-1])
-
-            if code in status_codes.keys():
-                status_codes[code] += 1
-
+        line_list = line.split(" ")
+        if len(line_list) > 4:
+            code = line_list[-2]
+            size = int(line_list[-1])
+            if code in cache.keys():
+                cache[code] += 1
             total_size += size
-            total_num += 1
+            counter += 1
 
-        if total_num == 10:
-            total_num = 0
-            print("File size: {}".format(total_size))
+        if counter == 10:
+            counter = 0
+            print('File size: {}'.format(total_size))
+            for key, value in sorted(cache.items()):
+                if value != 0:
+                    print('{}: {}'.format(key, value))
 
-            for k, v in sorted(status_codes.items()):
-                if v != 0:
-                    print("{}: {}".format(k, v))
-
-except Exception:
+except Exception as err:
     pass
 
 finally:
-    print("File size: {}".format(total_size))
-
-    for k, v in sorted(status_codes.items()):
-        if v != 0:
-            print("{}: {}".format(k, v))
+    print('File size: {}'.format(total_size))
+    for key, value in sorted(cache.items()):
+        if value != 0:
+            print('{}: {}'.format(key, value))
